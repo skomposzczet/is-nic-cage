@@ -28,6 +28,34 @@ def download_image(url):
         shutil.copyfileobj(r.raw, f)
     return filename
 
+
+class ErrorWindow(customtkinter.CTkToplevel):
+    def __init__(self, master, message):
+        super().__init__(master)
+        self.message = message
+        
+        self.title('Something went wrong')
+        self.geometry("400x200")
+        self.lift()
+        self.attributes("-topmost", True)
+        self.after(10)
+        self.grab_set()
+        self.resizable(False, False)
+
+        self._print_message()
+
+    def _print_message(self):
+        print(f'debug: |{self.message}|')
+        label = customtkinter.CTkLabel(self, text=self.message, font=('TkFixedFont', 20))
+        label.pack(fill='x', padx=20, pady=40)
+
+        button = customtkinter.CTkButton(self, width=100, text='Ok', command=self._leave)
+        button.pack(fill='x', padx=20, pady=20)
+
+    def _leave(self):
+        self.grab_release()
+        self.destroy()
+
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -96,10 +124,10 @@ class App(customtkinter.CTk):
         try:
             filename = download_image(url)
         except Exception as e:
-            print(f'debug: {e}')
-
-        if self.display_image(filename):
-            self.unlock_apply_button()
+            ErrorWindow(self, 'Failed to download image')
+        else:
+            if self.display_image(filename):
+                self.unlock_apply_button()
 
     def unlock_apply_button(self):
         self.apply_button.configure(state='normal')
@@ -115,8 +143,8 @@ class App(customtkinter.CTk):
         try:
             image = scaled_image(filename, maxsize=(500, 300))
             self.image_label.configure(image=image)
-        except PIL.UnidentifiedImageError as a:
-            print('debug: unrecognized format')
+        except PIL.UnidentifiedImageError:
+            ErrorWindow(self, 'Unrecognized file format')
             return False
         return True
     
