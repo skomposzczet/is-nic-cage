@@ -26,20 +26,17 @@ def download_image(url):
     return filename
 
 
-class ErrorWindow(customtkinter.CTkToplevel):
+class PopupWindow(customtkinter.CTkToplevel):
     def __init__(self, master, message):
         super().__init__(master)
         self.message = message
         
-        self.title('Something went wrong')
         self.geometry("400x200")
         self.lift()
         self.attributes("-topmost", True)
-        self.after(10)
+        self.after(10, self._print_message)
         self.grab_set()
         self.resizable(False, False)
-
-        self._print_message()
 
     def _print_message(self):
         label = customtkinter.CTkLabel(self, text=self.message, font=('TkFixedFont', 20))
@@ -51,3 +48,14 @@ class ErrorWindow(customtkinter.CTkToplevel):
     def _leave(self):
         self.grab_release()
         self.destroy()
+
+class ErrorWindow(PopupWindow):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.title('Something went wrong')
+
+class ResultWindow(PopupWindow):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.title('Result')
+
