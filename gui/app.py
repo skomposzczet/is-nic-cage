@@ -3,11 +3,12 @@ from tkinter import ttk
 from tkinter import filedialog
 import os
 import PIL
-from .utils import download_image, scaled_image, ErrorWindow
+from .utils import download_image, scaled_image, ErrorWindow, ResultWindow
 
 class App(customtkinter.CTk):
-    def __init__(self):
+    def __init__(self, callback_function):
         super().__init__()
+        self.callback = callback_function
 
         self.setup_app()
 
@@ -88,7 +89,8 @@ class App(customtkinter.CTk):
         self.apply_button.configure(state='normal')
 
     def callback_apply(self):
-        print('apply')
+        result = self.callback(self.currently_displayed_image)
+        ResultWindow(self, result)
 
     def setup_image(self):
         self.image_label = customtkinter.CTkLabel(self.main_frame, text='')
@@ -101,6 +103,7 @@ class App(customtkinter.CTk):
         except PIL.UnidentifiedImageError:
             ErrorWindow(self, 'Unrecognized file format')
             return False
+        self.currently_displayed_image = filename
         return True
 
     def leave(self):
