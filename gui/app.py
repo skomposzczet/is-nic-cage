@@ -33,6 +33,7 @@ class App(customtkinter.CTk):
     def setup_sidebar(self):
         self.sidebar = customtkinter.CTkFrame(self, width=150)
         self.sidebar.grid(row=0, column=0, padx=10, pady=20, sticky='news')
+        self.sidebar.grid_rowconfigure(4, weight=1)
 
     def setup_main_frame(self):
         self.main_frame = customtkinter.CTkFrame(self)
@@ -43,6 +44,7 @@ class App(customtkinter.CTk):
         self.create_web_button()
         self.create_separator()
         self.create_apply_button()
+        self.create_exit_button()
 
     def create_files_button(self):
         self.load_button_files = customtkinter.CTkButton(self.sidebar, text='Load image from files', font=self.font, command=self.callback_files)
@@ -58,6 +60,10 @@ class App(customtkinter.CTk):
     def create_apply_button(self):
         self.apply_button = customtkinter.CTkButton(self.sidebar, text='CHECK IF CAGE', font=self.font, command=self.callback_apply, state='disabled', fg_color='SpringGreen4')
         self.apply_button.grid(row=3, padx=20, pady=10, sticky='ew')
+
+    def create_exit_button(self):
+        self.exit_button = customtkinter.CTkButton(self.sidebar, text='Exit', font=self.font, fg_color='purple', hover_color='dark violet', command=self.leave)
+        self.exit_button.grid(row=4, padx=20, pady=20, sticky='sew')
 
     def callback_files(self):
         filename = filedialog.askopenfilename(initialdir=os.environ['HOME'], title='Select image')
@@ -96,4 +102,7 @@ class App(customtkinter.CTk):
             ErrorWindow(self, 'Unrecognized file format')
             return False
         return True
+
+    def leave(self):
+        self.destroy()
     
