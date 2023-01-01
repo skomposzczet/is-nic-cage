@@ -4,7 +4,8 @@ from tkinter import filedialog
 import os
 import PIL
 import cv2
-from .utils import download_image, scaled_image, ErrorWindow, ResultWindow, detect_image
+from .utils import download_image, scaled_image, ErrorWindow, ResultWindow
+from faceDetection.detection import detect_face
 
 
 class App(customtkinter.CTk):
@@ -19,6 +20,7 @@ class App(customtkinter.CTk):
 
         self.setup_buttons()
         self.setup_image()
+        self.path_to_saved_photo = './faces/imageWithBoundingBoxes.jpg'
 
     def setup_app(self):
         customtkinter.set_appearance_mode('dark')
@@ -75,10 +77,10 @@ class App(customtkinter.CTk):
 
     def callback_files(self):
         filename = filedialog.askopenfilename(initialdir=os.path.expanduser('~'), title='Select image')
-        cv2.imwrite('./Faces/detectedImage.jpg', detect_image(cv2.imread(filename), filename))
+        cv2.imwrite(self.path_to_saved_photo, detect_face(filename))
         if not filename:
             return
-        if self.display_image('./Faces/detectedImage.jpg'):
+        if self.display_image(self.path_to_saved_photo):
             self.unlock_apply_button()
 
     def callback_web(self):
@@ -90,9 +92,8 @@ class App(customtkinter.CTk):
         except Exception as e:
             ErrorWindow(self, 'Failed to download image')
         else:
-            img = cv2.imread(filename)
-            cv2.imwrite('./Faces/detectedImage.jpg', detect_image(cv2.imread(filename), filename))
-            if self.display_image('./Faces/detectedImage.jpg'):
+            cv2.imwrite(self.path_to_saved_photo, detect_face(filename))
+            if self.display_image(self.path_to_saved_photo):
                 self.unlock_apply_button()
 
     def unlock_apply_button(self):
@@ -117,5 +118,4 @@ class App(customtkinter.CTk):
         return True
 
     def leave(self):
-        # os.remove('./Faces/detectedImage.jpg')
         self.destroy()

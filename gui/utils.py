@@ -3,8 +3,6 @@ import requests
 import shutil
 from tempfile import gettempdir
 import customtkinter
-import cv2
-import os
 
 
 def scaled_image(filename, maxsize):
@@ -65,19 +63,4 @@ class ResultWindow(PopupWindow):
         super().__init__(*args)
         self.title('Result')
 
-
-def detect_image(image, filename):
-    path = './Faces'
-    for f in os.listdir(path):
-        os.remove((os.path.join(path, f)))
-
-    face_cascade = cv2.CascadeClassifier('haarcascade/haarcascade_frontalface_default.xml')
-    img = cv2.imread(filename)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        extracted_face = img[y:y + h + 1, x:x + w + 1]
-        cv2.imwrite('./Faces/' + str(h) + '.jpg', extracted_face)
-    return img
 
