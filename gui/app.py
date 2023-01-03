@@ -3,7 +3,10 @@ from tkinter import ttk
 from tkinter import filedialog
 import os
 import PIL
+import cv2
 from .utils import download_image, scaled_image, ErrorWindow, ResultWindow
+from faceDetection.detection import detect_face
+
 
 class App(customtkinter.CTk):
     def __init__(self, callback_function):
@@ -17,6 +20,7 @@ class App(customtkinter.CTk):
 
         self.setup_buttons()
         self.setup_image()
+        self.path_to_saved_photo = './faces/imageWithBoundingBoxes.jpg'
 
     def setup_app(self):
         customtkinter.set_appearance_mode('dark')
@@ -48,29 +52,35 @@ class App(customtkinter.CTk):
         self.create_exit_button()
 
     def create_files_button(self):
-        self.load_button_files = customtkinter.CTkButton(self.sidebar, text='Load image from files', font=self.font, command=self.callback_files)
+        self.load_button_files = customtkinter.CTkButton(self.sidebar, text='Load image from files', font=self.font,
+                                                         command=self.callback_files)
         self.load_button_files.grid(row=0, padx=20, pady=20, sticky='ew')
 
     def create_web_button(self):
-        self.load_button_web = customtkinter.CTkButton(self.sidebar, text='Load image from web', font=self.font, command=self.callback_web)
+        self.load_button_web = customtkinter.CTkButton(self.sidebar, text='Load image from web', font=self.font,
+                                                       command=self.callback_web)
         self.load_button_web.grid(row=1, padx=20, pady=10, sticky='ew')
 
     def create_separator(self):
         ttk.Separator(self.sidebar, orient='vertical').grid(row=2, sticky='ew', padx=10, pady=10)
 
     def create_apply_button(self):
-        self.apply_button = customtkinter.CTkButton(self.sidebar, text='CHECK IF CAGE', font=self.font, command=self.callback_apply, state='disabled', fg_color='SpringGreen4')
+        self.apply_button = customtkinter.CTkButton(self.sidebar, text='CHECK IF CAGE', font=self.font,
+                                                    command=self.callback_apply, state='disabled',
+                                                    fg_color='SpringGreen4')
         self.apply_button.grid(row=3, padx=20, pady=10, sticky='ew')
 
     def create_exit_button(self):
-        self.exit_button = customtkinter.CTkButton(self.sidebar, text='Exit', font=self.font, fg_color='purple', hover_color='dark violet', command=self.leave)
+        self.exit_button = customtkinter.CTkButton(self.sidebar, text='Exit', font=self.font, fg_color='purple',
+                                                   hover_color='dark violet', command=self.leave)
         self.exit_button.grid(row=4, padx=20, pady=20, sticky='sew')
 
     def callback_files(self):
-        filename = filedialog.askopenfilename(initialdir=os.environ['HOME'], title='Select image')
+        filename = filedialog.askopenfilename(initialdir=os.path.expanduser('~'), title='Select image')
+        cv2.imwrite(self.path_to_saved_photo, detect_face(filename))
         if not filename:
             return
-        if self.display_image(filename):
+        if self.display_image(self.path_to_saved_photo):
             self.unlock_apply_button()
 
     def callback_web(self):
@@ -82,7 +92,8 @@ class App(customtkinter.CTk):
         except Exception as e:
             ErrorWindow(self, 'Failed to download image')
         else:
-            if self.display_image(filename):
+            cv2.imwrite(self.path_to_saved_photo, detect_face(filename))
+            if self.display_image(self.path_to_saved_photo):
                 self.unlock_apply_button()
 
     def unlock_apply_button(self):
@@ -108,4 +119,3 @@ class App(customtkinter.CTk):
 
     def leave(self):
         self.destroy()
-    
