@@ -3,9 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog
 import os
 import PIL
-import cv2
 from .utils import download_image, scaled_image, ErrorWindow, ResultWindow
-from faceDetection.detection import detect_face
 
 
 class App(customtkinter.CTk):
@@ -20,7 +18,6 @@ class App(customtkinter.CTk):
 
         self.setup_buttons()
         self.setup_image()
-        self.path_to_saved_photo = './faces/imageWithBoundingBoxes.jpg'
 
     def setup_app(self):
         customtkinter.set_appearance_mode('dark')
@@ -62,7 +59,8 @@ class App(customtkinter.CTk):
         self.load_button_web.grid(row=1, padx=20, pady=10, sticky='ew')
 
     def create_separator(self):
-        ttk.Separator(self.sidebar, orient='vertical').grid(row=2, sticky='ew', padx=10, pady=10)
+        ttk.Separator(self.sidebar, orient='vertical').grid(
+            row=2, sticky='ew', padx=10, pady=10)
 
     def create_apply_button(self):
         self.apply_button = customtkinter.CTkButton(self.sidebar, text='CHECK IF CAGE', font=self.font,
@@ -76,15 +74,16 @@ class App(customtkinter.CTk):
         self.exit_button.grid(row=4, padx=20, pady=20, sticky='sew')
 
     def callback_files(self):
-        filename = filedialog.askopenfilename(initialdir=os.path.expanduser('~'), title='Select image')
-        cv2.imwrite(self.path_to_saved_photo, detect_face(filename))
+        filename = filedialog.askopenfilename(
+            initialdir=os.path.expanduser('~'), title='Select image')
         if not filename:
             return
-        if self.display_image(self.path_to_saved_photo):
+        if self.display_image(filename):
             self.unlock_apply_button()
 
     def callback_web(self):
-        url = customtkinter.CTkInputDialog(text="Paste link to image:", title="Load image from web").get_input()
+        url = customtkinter.CTkInputDialog(
+            text="Paste link to image:", title="Load image from web").get_input()
         if not url:
             return
         try:
@@ -92,8 +91,7 @@ class App(customtkinter.CTk):
         except Exception as e:
             ErrorWindow(self, 'Failed to download image')
         else:
-            cv2.imwrite(self.path_to_saved_photo, detect_face(filename))
-            if self.display_image(self.path_to_saved_photo):
+            if self.display_image(filename):
                 self.unlock_apply_button()
 
     def unlock_apply_button(self):
