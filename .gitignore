@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Image directories 
+classifier/pictures/nick/*
+classifier/pictures/others/*
