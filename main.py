@@ -1,10 +1,8 @@
+from classifier.api import check_if_nick
 from gui.app import App
 
-def stub(filaneme):
-    return 'maybe it is Nic Cage, maybe not'
-
 def main():
-    app = App(stub)
+    app = App(check_if_nick)
     app.mainloop()
 
 if __name__ == '__main__':
