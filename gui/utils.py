@@ -41,10 +41,12 @@ class PopupWindow(customtkinter.CTkToplevel):
         self.resizable(False, False)
 
     def _print_message(self):
-        label = customtkinter.CTkLabel(self, text=self.message, font=('TkFixedFont', 20))
+        label = customtkinter.CTkLabel(
+            self, text=self.message, font=('TkFixedFont', 20))
         label.pack(fill='x', padx=20, pady=40)
 
-        button = customtkinter.CTkButton(self, width=100, text='Ok', command=self._leave)
+        button = customtkinter.CTkButton(
+            self, width=100, text='Ok', command=self._leave)
         button.pack(fill='x', padx=20, pady=20)
 
     def _leave(self):
@@ -62,5 +64,3 @@ class ResultWindow(PopupWindow):
     def __init__(self, *args):
         super().__init__(*args)
         self.title('Result')
-
-

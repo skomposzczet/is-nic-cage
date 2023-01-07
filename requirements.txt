@@ -6,5 +6,5 @@ idna==3.4
 Pillow==9.3.0
 requests==2.28.1
 urllib3==1.26.13
-
 opencv-python~=4.7.0.68
+tensorflow==2.11.0
